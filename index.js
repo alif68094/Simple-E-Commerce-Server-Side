@@ -30,6 +30,7 @@ async function run() {
     await client.connect();
 
     const productCollection = client.db('productDB').collection('product')
+    const cartCollection = client.db('productDB').collection('cart')
 
 
     app.get('/product', async(req, res) => {
@@ -52,6 +53,12 @@ async function run() {
         res.send(result)
     })
 
+
+   
+
+
+
+
     app.put('/product/:id', async(req, res) => {
         const id = req.params.id
         const filter = {_id: new ObjectId(id)}
@@ -70,6 +77,32 @@ async function run() {
         }
         const result = await productCollection.updateOne(filter, product, option)
         res.send(result)
+    })
+
+
+
+     // cart apis
+
+
+     app.get('/cart', async(req, res) => {
+        const cursor = cartCollection.find()
+        const result = await cursor.toArray()
+        res.send(result)
+    })
+
+     app.post('/cart', async(req, res) => {
+        const newCart = req.body;
+        console.log(newCart);
+        const result = await cartCollection.insertOne(newCart)
+        res.send(result)
+    })
+
+    app.delete('/cart/:id', async(req, res) => {
+        const id = req.params.id
+        const query = {_id: new ObjectId(id)}
+        const result = await cartCollection.deleteOne(query)
+        res.send(result)
+
     })
 
 
